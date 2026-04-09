@@ -1,7 +1,8 @@
 {
-  "name": "quotex-verify",
-  "version": "1.0.0",
-  "dependencies": {
-    "axios": "^1.6.0"
-  }
+  "version": 2,
+  "name": "quotex-checker",
+  "builds": [
+    { "src": "api/verify.js", "use": "@vercel/node" },
+    { "src": "index.html", "use": "@vercel/static" }
+  ]
 }
