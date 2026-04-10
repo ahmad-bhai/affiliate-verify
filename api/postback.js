@@ -1,25 +1,25 @@
-G5VLXM-8ge7jzU8ck9oYbulH0";
-
-    // default async function handler(req, res) {
-    const { uid, status, cid, sid, lid, country, sumdep } = req.query;
+export default async function handler(req, res) {
+    // 1. Inputs ko pakarna
+    const { uid, status, sumdep } = req.query;
+    
+    // 2. Aapki Sahi API aur Bot ID
     const BOT_ID = "8320428359";
     const API_KEY = "AAFJLQfhXpzV0uzn0PO9lz1NqOO30uJFgok";
 
-    // Agar UID nahi hai toh bhi error mat do, sirf console mein batao
     if (!uid) {
-        console.log("⚠️ No UID provided, but saving other data for debugging");
-        return res.status(200).send("No UID — but request received. Check bot logs.");
+        return res.status(200).send("Ahmad Bhai, system is live but UID is missing in URL.");
     }
 
     try {
-        // Property save karte waqt status default "ftd" agar kuch aur ho
-        let finalStatus = status;
+        // Status mapping
+        let finalStatus = status || "registered";
         if (finalStatus === "reg" || finalStatus === "conf") finalStatus = "registered";
         if (finalStatus === "ftd" || finalStatus === "dep") finalStatus = "ftd";
 
         const bjs_url = `https://api.bots.business/v1/bots/${BOT_ID}/properties`;
-        
-        await fetch(bjs_url, {
+
+        // 3. BJS ko data bhejna (Standard fetch use kar rahe hain)
+        const response = await fetch(bjs_url, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -32,22 +32,16 @@ G5VLXM-8ge7jzU8ck9oYbulH0";
             })
         });
 
-        // Extra info bhi save karo (amount, country, etc.)
-        if (sumdep && parseFloat(sumdep) > 0) {
-            await fetch(bjs_url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'api-key': API_KEY },
-                body: JSON.stringify({
-                    name: "qx_deposit_" + uid,
-                    value: sumdep,
-                    type: "string"
-                })
-            });
+        // 4. Response check karna
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`BJS API Error: ${errorText}`);
         }
 
-        return res.status(200).send(`✅ Data saved: UID=${uid}, Status=${finalStatus}, Deposit=${sumdep || 0}`);
+        return res.status(200).send(`✅ Ahmad Bhai, Success! UID=${uid} saved.`);
+
     } catch (error) {
-        console.error("Bot API error:", error);
-        return res.status(500).send("Server error: " + error.message);
+        console.error("Crash Details:", error.message);
+        return res.status(500).send("Crash Fixed, but error: " + error.message);
     }
 }
