@@ -1,7 +1,9 @@
-export default async function handler(req, res) {
+G5VLXM-8ge7jzU8ck9oYbulH0";
+
+    // default async function handler(req, res) {
     const { uid, status, cid, sid, lid, country, sumdep } = req.query;
     const BOT_ID = "8320428359";
-    const API_KEY = "AAET0DP7fhG5VLXM-8ge7jzU8ck9oYbulH0";
+    const API_KEY = "AAFJLQfhXpzV0uzn0PO9lz1NqOO30uJFgok";
 
     // Agar UID nahi hai toh bhi error mat do, sirf console mein batao
     if (!uid) {
