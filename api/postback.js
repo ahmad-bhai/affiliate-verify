@@ -1,47 +1,27 @@
 export default async function handler(req, res) {
-    // 1. Inputs ko pakarna
-    const { uid, status, sumdep } = req.query;
+    const { uid, status } = req.query;
     
-    // 2. Aapki Sahi API aur Bot ID
     const BOT_ID = "8320428359";
     const API_KEY = "AAFJLQfhXpzV0uzn0PO9lz1NqOO30uJFgok";
 
-    if (!uid) {
-        return res.status(200).send("Ahmad Bhai, system is live but UID is missing in URL.");
-    }
+    if (!uid) return res.status(200).send("UID missing");
 
     try {
-        // Status mapping
-        let finalStatus = status || "registered";
-        if (finalStatus === "reg" || finalStatus === "conf") finalStatus = "registered";
-        if (finalStatus === "ftd" || finalStatus === "dep") finalStatus = "ftd";
+        // BJS GET method with API Key in URL (Sabse powerfull tareeka)
+        const bjs_url = `https://api.bots.business/v1/bots/${BOT_ID}/properties?api_key=${API_KEY}&name=qx_${uid}&value=${status || "ftd"}&type=string`;
 
-        const bjs_url = `https://api.bots.business/v1/bots/${BOT_ID}/properties`;
+        const response = await fetch(bjs_url);
+        const result = await response.json();
 
-        // 3. BJS ko data bhejna (Standard fetch use kar rahe hain)
-        const response = await fetch(bjs_url, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'api-key': API_KEY 
-            },
-            body: JSON.stringify({
-                name: "qx_" + uid,
-                value: finalStatus,
-                type: "string"
-            })
-        });
-
-        // 4. Response check karna
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`BJS API Error: ${errorText}`);
+        // Agar BJS ne phir bhi error diya
+        if (result.errors) {
+            return res.status(401).send("BJS Still Rejecting Key: " + JSON.stringify(result.errors));
         }
 
-        return res.status(200).send(`✅ Ahmad Bhai, Success! UID=${uid} saved.`);
+        return res.status(200).send(`✅ Mubarak Ho Ahmad Bhai! UID ${uid} save ho gayi hai.`);
 
     } catch (error) {
-        console.error("Crash Details:", error.message);
-        return res.status(500).send("Crash Fixed, but error: " + error.message);
+        return res.status(500).send("System Error: " + error.message);
     }
 }
+
