@@ -1,15 +1,1 @@
-const http = require('http');
-
-const server = http.createServer((req, res) => {
-    // Browser ko batana ke yeh sirf plain text hai
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
-
-    // Sirf yeh text browser tak jayega, aapka logic server pe rahega
-    res.end("Not Found!");
-});
-
-// Aapka server is port par chalega
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-    console.log(`Server is invisible and running on port ${PORT}`);
-});
+Not Found!
