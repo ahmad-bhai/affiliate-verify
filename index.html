@@ -1,27 +1,30 @@
 const http = require('http');
-const url = require('url');
 
 const server = http.createServer((req, res) => {
-    // URL se query parameters nikalne ke liye
-    const queryObject = url.parse(req.url, true).query;
-    const uid = queryObject.uid;
+    // Favicon request ko ignore karne ke liye
+    if (req.url === '/favicon.ico') {
+        res.writeHead(204);
+        return res.end();
+    }
 
-    // Content-Type set karna taake browser ise plain text ki tarah treat kare
+    // URL parameters nikalne ka naya tareeka
+    const fullUrl = new URL(req.url, `http://${req.headers.host}`);
+    const uid = fullUrl.searchParams.get('uid');
+
     res.setHeader('Content-Type', 'text/plain');
 
-    // Aapki condition check
+    // UID validation
     if (!uid) {
         res.statusCode = 400;
         return res.end("Error: Missing Trader ID (uid)");
     }
 
-    // Default response jo screen pe show hogi
+    // Target response
     res.statusCode = 404;
     res.end("Not Found!");
 });
 
-// Server ko port 3000 par chalao
 const PORT = 3000;
 server.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}/`);
+    console.log(`Server active on port ${PORT}`);
 });
