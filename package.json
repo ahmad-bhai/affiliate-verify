@@ -1,8 +1,5 @@
 {
-  "version": 2,
-  "name": "quotex-checker",
-  "builds": [
-    { "src": "api/verify.js", "use": "@vercel/node" },
-    { "src": "index.html", "use": "@vercel/static" }
-  ]
+  "dependencies": {
+    "node-fetch": "^3.0.0"
+  }
 }
