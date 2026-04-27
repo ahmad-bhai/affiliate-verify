@@ -17,13 +17,12 @@
         body { 
             background: radial-gradient(circle at top, #1a0b2e 0%, #070707 100%);
             color: white; 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            font-family: 'Segoe UI', sans-serif; 
             display: flex; 
             justify-content: center; 
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            overflow-x: hidden;
         }
 
         .container { width: 100%; max-width: 400px; padding: 20px; }
@@ -31,143 +30,91 @@
         .glass { 
             background: var(--glass); 
             backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.1); 
             padding: 35px 25px; 
             border-radius: 24px; 
             text-align: center; 
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            position: relative;
         }
 
-        .logo {
-            width: 90px;
-            height: 90px;
-            margin-bottom: 15px;
-            border-radius: 50%;
-            border: 2px solid var(--main);
-            padding: 5px;
-            background: rgba(0,0,0,0.3);
-            object-fit: contain;
-        }
+        .logo { width: 90px; height: 90px; margin-bottom: 15px; border-radius: 50%; border: 2px solid var(--main); background: rgba(0,0,0,0.3); object-fit: cover; }
 
-        h2 { 
-            margin: 10px 0; 
-            font-size: 22px; 
-            letter-spacing: 1px;
-            background: linear-gradient(to right, #fff, #b983ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        h2 { margin: 10px 0; font-size: 22px; background: linear-gradient(to right, #fff, #b983ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        p.subtitle { font-size: 13px; color: #aaa; margin-bottom: 25px; }
-
-        .input-group { position: relative; margin-bottom: 20px; }
+        .input-group { margin-bottom: 20px; }
 
         input { 
-            width: 100%; 
-            padding: 14px; 
-            border-radius: 12px; 
-            border: 1px solid rgba(255,255,255,0.1); 
-            background: rgba(0,0,0,0.2); 
-            color: white; 
-            outline: none; 
-            box-sizing: border-box;
-            transition: 0.3s;
-            text-align: center;
-            font-size: 16px;
+            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); 
+            background: rgba(0,0,0,0.2); color: white; outline: none; box-sizing: border-box; text-align: center; font-size: 16px;
         }
 
-        input:focus { border-color: var(--main); box-shadow: 0 0 15px rgba(94, 23, 125, 0.3); }
-
         button { 
-            width: 100%; 
-            padding: 14px; 
-            background: linear-gradient(45deg, var(--main), var(--accent)); 
-            border: none; 
-            color: white; 
-            border-radius: 12px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            width: 100%; padding: 14px; background: linear-gradient(45deg, var(--main), var(--accent)); 
+            border: none; color: white; border-radius: 12px; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: 0.3s;
         }
 
         button:hover { transform: translateY(-2px); opacity: 0.9; }
-        button:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        /* Notification Area */
-        #msgBox {
-            margin-top: 15px;
-            font-size: 13px;
-            padding: 10px;
-            border-radius: 8px;
+        /* Referral Section (Hidden by Default) */
+        #affiliateBox {
+            margin-top: 25px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
             display: none;
-            animation: fadeIn 0.4s ease;
+            animation: fadeIn 0.5s ease;
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        .reg-btn {
+            background: #2ecc71;
+            color: #000;
+            padding: 10px;
+            text-decoration: none;
+            border-radius: 8px;
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 14px;
+        }
 
+        #msgBox { margin-top: 15px; font-size: 13px; padding: 10px; border-radius: 8px; display: none; }
         .msg-error { background: rgba(231, 76, 60, 0.15); color: #ff7675; border: 1px solid rgba(231, 76, 60, 0.3); }
         .msg-success { background: rgba(46, 204, 113, 0.15); color: #55efc4; border: 1px solid rgba(46, 204, 113, 0.3); }
 
-        .stats-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 12px; 
-            margin-top: 25px; 
-            display: none; 
-        }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px; display: none; }
+        .stat-card { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 14px; border-left: 3px solid var(--main); text-align: left; }
+        .stat-card span { font-size: 10px; color: #888; text-transform: uppercase; }
+        .stat-card b { font-size: 15px; color: #fff; display: block; margin-top: 4px; }
 
-        .stat-card { 
-            background: rgba(255,255,255,0.03); 
-            padding: 15px; 
-            border-radius: 14px; 
-            border-left: 3px solid var(--main); 
-            text-align: left;
-        }
-
-        .stat-card span { font-size: 11px; color: #888; text-transform: uppercase; }
-        .stat-card b { font-size: 16px; color: #fff; display: block; margin-top: 4px; }
-
-        .loader {
-            width: 18px;
-            height: 18px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top: 2px solid #fff;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            display: inline-block;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="glass">
-        <img src="logo.png" alt="Logo" class="logo">
+        <img src="logo.png" alt="Royal Logo" class="logo">
         <h2>Royal Quotex Academy</h2>
-        <p class="subtitle">Trader Verification System</p>
         
         <div class="input-group">
             <input type="number" id="traderId" placeholder="Enter Trader ID">
         </div>
         
-        <button onclick="checkData()" id="btn">Verify Account</button>
+        <button onclick="checkData()" id="btn">Verify Now</button>
 
         <div id="msgBox"></div>
 
+        <div id="affiliateBox">
+            <p style="font-size: 12px; margin: 0; color: #ccc;">Account not found under our team!</p>
+            <a href="https://broker-qx.pro/sign-up/?lid=2056722" target="_blank" class="reg-btn">Create New Account</a>
+        </div>
+
         <div class="stats-grid" id="stats">
-            <div class="stat-card"><span>Total Deposit</span><b id="dep">$0.00</b></div>
-            <div class="stat-card"><span>Withdrawal</span><b id="wd">$0.00</b></div>
-            <div class="stat-card"><span>Live Status</span><b id="st">Active</b></div>
-            <div class="stat-card"><span>Region</span><b id="ctry">Unknown</b></div>
+            <div class="stat-card"><span>Deposit</span><b id="dep">$0.00</b></div>
+            <div class="stat-card"><span>Withdraw</span><b id="wd">$0.00</b></div>
+            <div class="stat-card"><span>Status</span><b id="st">-</b></div>
+            <div class="stat-card"><span>Country</span><b id="ctry">-</b></div>
         </div>
     </div>
 </div>
@@ -184,16 +131,14 @@
         const id = document.getElementById('traderId').value;
         const btn = document.getElementById('btn');
         const stats = document.getElementById('stats');
-        const msgBox = document.getElementById('msgBox');
+        const affBox = document.getElementById('affiliateBox');
         
-        if(!id) {
-            showMsg("Please enter a valid Trader ID", "error");
-            return;
-        }
+        if(!id) { showMsg("Please enter your Trader ID", "error"); return; }
 
-        msgBox.style.display = 'none';
         btn.disabled = true;
-        btn.innerHTML = '<div class="loader"></div> Processing...';
+        btn.innerText = "Checking...";
+        document.getElementById('msgBox').style.display = 'none';
+        affBox.style.display = 'none';
 
         try {
             const res = await fetch('/api/postback', {
@@ -205,21 +150,22 @@
             const data = await res.json();
 
             if(data.success) {
-                showMsg("Account Verified Successfully!", "success");
+                showMsg("Account Verified!", "success");
                 stats.style.display = 'grid';
                 document.getElementById('dep').innerText = '$' + (data.balance || data.deposit || '0.00');
                 document.getElementById('wd').innerText = '$' + (data.withdraw || '0.00');
                 document.getElementById('st').innerText = data.status.toUpperCase();
                 document.getElementById('ctry').innerText = data.country;
             } else {
-                showMsg("Trader ID not found. Use our affiliate link!", "error");
+                showMsg("Verification Failed!", "error");
+                affBox.style.display = 'block';
                 stats.style.display = 'none';
             }
         } catch (e) {
-            showMsg("Sync Error: No data received yet.", "error");
+            showMsg("Connection Error", "error");
         } finally {
             btn.disabled = false;
-            btn.innerText = "Verify Account";
+            btn.innerText = "Verify Now";
         }
     }
 </script>
