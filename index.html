@@ -1,16 +1,15 @@
 const http = require('http');
 
 const server = http.createServer((req, res) => {
-    // Content-Type text/plain rakha hai taake koi HTML rendering na ho
-    res.setHeader('Content-Type', 'text/plain');
+    // Browser ko batana ke yeh sirf plain text hai
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
 
-    // Status 404 set kiya hai aur sirf "Not Found!" send kar raha hoon
-    res.statusCode = 404;
+    // Sirf yeh text browser tak jayega, aapka logic server pe rahega
     res.end("Not Found!");
 });
 
-// Port 3000 par server chalega
-const PORT = 3000;
+// Aapka server is port par chalega
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server is invisible and running on port ${PORT}`);
 });
