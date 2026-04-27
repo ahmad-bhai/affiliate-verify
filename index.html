@@ -3,141 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trader ID Verification</title>
+    <title>Trader Meta Dashboard</title>
     <style>
-        :root {
-            --primary: #5E177D;
-            --accent: #8e24aa;
-            --bg: #0f0c29;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
-            width: 350px;
-            text-align: center;
-        }
-
-        h2 { margin-bottom: 20px; font-weight: 300; }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            color: white;
-            outline: none;
-            box-sizing: border-box;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background: var(--primary);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        button:hover { background: var(--accent); transform: translateY(-2px); }
-
-        #statusMsg {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 8px;
-            display: none;
-            font-size: 14px;
-        }
-
-        .success { background: rgba(46, 204, 113, 0.2); color: #2ecc71; border: 1px solid #2ecc71; }
-        .error { background: rgba(231, 76, 60, 0.2); color: #e74c3c; border: 1px solid #e74c3c; }
-        
-        .loader {
-            border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top: 3px solid #fff;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 10px;
-        }
-
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        :root { --main: #5E177D; --dark: #0a0a0a; --glass: rgba(255, 255, 255, 0.05); }
+        body { background: var(--dark); color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; }
+        .container { width: 100%; max-width: 450px; }
+        .glass { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); padding: 25px; border-radius: 15px; text-align: center; }
+        input { width: 80%; padding: 12px; border-radius: 8px; border: none; background: rgba(255,255,255,0.1); color: white; margin-bottom: 15px; outline: none; }
+        button { width: 85%; padding: 12px; background: var(--main); border: none; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; display: none; }
+        .stat-card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px; border-bottom: 2px solid var(--main); }
+        .stat-card span { font-size: 12px; color: #bbb; display: block; }
+        .stat-card b { font-size: 18px; color: #fff; }
+        #statusTag { display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 12px; margin-top: 10px; }
+        .success { background: #2ecc7122; color: #2ecc71; border: 1px solid #2ecc71; }
     </style>
 </head>
 <body>
 
-<div class="glass-card">
-    <h2>Verify Trader ID</h2>
-    <input type="text" id="traderId" placeholder="Enter Trader ID (e.g. 12345)">
-    <button id="verifyBtn" onclick="verifyID()">Verify Now</button>
-    <div id="statusMsg"></div>
+<div class="container">
+    <div class="glass">
+        <h2>Trader Verification</h2>
+        <p style="font-size: 13px; color: #888;">Enter your Quotex ID to sync data</p>
+        
+        <input type="text" id="traderId" placeholder="Trader ID (e.g. 542163)">
+        <button onclick="checkData()" id="btn">Sync Dashboard</button>
+
+        <div id="statusTag" style="display: none;">Verified Affiliate Account</div>
+
+        <div class="stats-grid" id="stats">
+            <div class="stat-card"><span>Total Deposit</span><b id="dep">$0.00</b></div>
+            <div class="stat-card"><span>Withdrawal</span><b id="wd">$0.00</b></div>
+            <div class="stat-card"><span>Status</span><b id="st">Active</b></div>
+            <div class="stat-card"><span>Country</span><b id="ctry">PK</b></div>
+        </div>
+    </div>
 </div>
 
 <script>
-    async function verifyID() {
-        const idInput = document.getElementById('traderId').value;
-        const btn = document.getElementById('verifyBtn');
-        const status = document.getElementById('statusMsg');
-
-        if (!idInput) return;
-
-        // Loading state
-        btn.disabled = true;
-        btn.innerHTML = '<span class="loader"></span> Checking...';
-        status.style.display = 'none';
+    async function checkData() {
+        const id = document.getElementById('traderId').value;
+        const btn = document.getElementById('btn');
+        const stats = document.getElementById('stats');
+        
+        btn.innerText = "Connecting...";
 
         try {
-            const response = await fetch('/api/verify', {
+            // Hum postback wali file ko hi hit kar rahe hain check karne ke liye
+            const res = await fetch('/api/postback', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ traderId: idInput })
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ checkId: id })
             });
 
-            const data = await response.json();
+            const data = await res.json();
 
-            status.style.display = 'block';
-            if (data.success) {
-                status.className = 'success';
-                status.innerText = "✅ Success! Access Granted.";
-                // Yahan aap localstorage mein ID save kar sakte hain
-                localStorage.setItem('verified_user', idInput);
+            if(data.success) {
+                document.getElementById('statusTag').style.display = 'inline-block';
+                document.getElementById('statusTag').className = 'success';
+                stats.style.display = 'grid';
+                document.getElementById('dep').innerText = '$' + data.balance;
+                document.getElementById('wd').innerText = '$' + data.withdraw;
+                document.getElementById('st').innerText = data.status.toUpperCase();
+                document.getElementById('ctry').innerText = data.country;
             } else {
-                status.className = 'error';
-                status.innerText = "❌ Invalid ID! Please use our link.";
+                alert("ID Not Found! Make sure you used our link.");
             }
-        } catch (err) {
-            status.style.display = 'block';
-            status.className = 'error';
-            status.innerText = "Connection error!";
+        } catch (e) {
+            console.log(e);
+            alert("Sync Error: No data received from Quotex yet.");
         } finally {
-            btn.disabled = false;
-            btn.innerText = 'Verify Now';
+            btn.innerText = "Sync Dashboard";
         }
     }
 </script>
