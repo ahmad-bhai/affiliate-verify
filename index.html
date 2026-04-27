@@ -3,72 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verification Center</title>
+    <title>Trader ID Verification</title>
     <style>
-        body { background: #0f0f0f; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: #1a1a1a; padding: 30px; border-radius: 15px; border: 1px solid #333; text-align: center; width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h2 { color: #34ace1; margin-top: 0; }
-        input { width: 100%; padding: 12px; margin: 15px 0; border-radius: 8px; border: none; background: #252525; color: white; box-sizing: border-box; outline: none; border: 1px solid #444; }
-        input:focus { border-color: #34ace1; }
-        button { width: 100%; padding: 12px; background: #8B0000; border: none; color: white; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #b30000; transform: translateY(-2px); }
+        :root {
+            --primary: #5E177D;
+            --accent: #8e24aa;
+            --bg: #0f0c29;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+            width: 350px;
+            text-align: center;
+        }
+
+        h2 { margin-bottom: 20px; font-weight: 300; }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            outline: none;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover { background: var(--accent); transform: translateY(-2px); }
+
+        #statusMsg {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .success { background: rgba(46, 204, 113, 0.2); color: #2ecc71; border: 1px solid #2ecc71; }
+        .error { background: rgba(231, 76, 60, 0.2); color: #e74c3c; border: 1px solid #e74c3c; }
         
-        /* Toast Notification */
-        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 1; bottom: 30px; font-size: 14px; border-left: 5px solid #34ace1; }
-        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+        .loader {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top: 3px solid #fff;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>Verify Account</h2>
-    <input type="text" id="idInput" placeholder="Enter 8-digit ID" maxlength="8">
-    <button onclick="checkID()">VERIFY NOW</button>
-    <div id="statusText" style="margin-top: 15px; font-size: 13px;"></div>
+<div class="glass-card">
+    <h2>Verify Trader ID</h2>
+    <input type="text" id="traderId" placeholder="Enter Trader ID (e.g. 12345)">
+    <button id="verifyBtn" onclick="verifyID()">Verify Now</button>
+    <div id="statusMsg"></div>
 </div>
 
-<div id="toast"></div>
-
 <script>
-    function showToast(msg, color) {
-        const t = document.getElementById("toast");
-        t.innerText = msg;
-        t.style.borderLeftColor = color;
-        t.className = "show";
-        setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000);
-    }
+    async function verifyID() {
+        const idInput = document.getElementById('traderId').value;
+        const btn = document.getElementById('verifyBtn');
+        const status = document.getElementById('statusMsg');
 
-    async function checkID() {
-        const id = document.getElementById("idInput").value;
-        const statusText = document.getElementById("statusText");
+        if (!idInput) return;
 
-        if (!/^\d{8}$/.test(id)) {
-            showToast("Please enter only 8 digits ID ❗", "#8B0000");
-            return;
-        }
+        // Loading state
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loader"></span> Checking...';
+        status.style.display = 'none';
 
-        statusText.innerText = "Checking...";
-        
         try {
-            const res = await fetch(`/api/verify?id=${id}`);
-            const data = await res.json();
+            const response = await fetch('/api/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ traderId: idInput })
+            });
 
-            if (data.status === 'success') {
-                showToast("Success! Redirecting...", "#2ed573");
-                statusText.innerHTML = `<a href="https://t.me/+Abcde12345" style="color:#34ace1">JOIN VIP CHANNEL</a>`;
-            } else if (data.status === 'no_deposit') {
-                showToast("Deposit Required ❗", "#eccc68");
-                statusText.innerHTML = "Account created, but $20 deposit missing.";
+            const data = await response.json();
+
+            status.style.display = 'block';
+            if (data.success) {
+                status.className = 'success';
+                status.innerText = "✅ Success! Access Granted.";
+                // Yahan aap localstorage mein ID save kar sakte hain
+                localStorage.setItem('verified_user', idInput);
             } else {
-                showToast("Account Not Found ❌", "#8B0000");
-                statusText.innerHTML = "Please create account with our link.";
+                status.className = 'error';
+                status.innerText = "❌ Invalid ID! Please use our link.";
             }
-        } catch (e) {
-            showToast("Server Error", "#8B0000");
+        } catch (err) {
+            status.style.display = 'block';
+            status.className = 'error';
+            status.innerText = "Connection error!";
+        } finally {
+            btn.disabled = false;
+            btn.innerText = 'Verify Now';
         }
     }
 </script>
+
 </body>
 </html>
