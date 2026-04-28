@@ -1,0 +1,22 @@
+const express = require('express');
+const app = express();
+const PORT = 3000;
+
+// Yeh function aapka asli code hide karke rakhega (Base64)
+const hiddenSystem = "PCFkb2N0eXBlIGh0bWw+PGh0bWw+PGJvZHk+PGgxPkFobWFkIEJoYWkgU2VjcmV0PC9oMT48L2JvZHk+PC9odG1sPg==";
+
+app.all('*', (req, res) => {
+    // Sirf is specific URL par aapka system khulega
+    // Example: http://localhost:3000/open-system-99
+    if (req.path === '/open-system-99') {
+        res.setHeader('Content-Type', 'text/html');
+        return res.send(Buffer.from(hiddenSystem, 'base64').toString());
+    }
+
+    // Baaki puri dunya ke liye sirf ye 3 lines
+    res.status(404);
+    res.setHeader('Content-Type', 'text/plain'); // Isse HTML source gayab ho jata hai
+    res.send(`404: NOT_FOUND\nCode: NOT_FOUND\nID: sin1::zpphn-1777403452659-9803bdf40879`);
+});
+
+app.listen(PORT);
