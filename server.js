@@ -2,32 +2,23 @@ const express = require('express');
 const app = express();
 const PORT = 3000;
 
-// Aapka asli HTML code (Yahan apna dashboard ya script paste karein)
-const secretContent = `
-<!DOCTYPE html>
-<html>
-<head><title>Ahmad Bhai System</title></head>
-<body style="background:#000; color:#0f0; text-align:center; padding-top:50px;">
-    <h1>Access Granted!</h1>
-    <p>Yeh aapka asli system hai jo single file mein hide hai.</p>
-</body>
-</html>
-`;
+// Aapka HTML code yahan Base64 mein convert kar diya hai taake file mein bhi nazar na aaye
+const encodedData = "PCFkb2N0eXBlIGh0bWw+PGh0bWw+PGhlYWQ+PHRpdGxlPkFobWFkIEJoYWkgU3lzdGVtPC90aXRsZT48L2hlYWQ+PGJvZHkgc3R5bGU9ImJhY2tncm91bmQ6IzAwMDsgY29sb3I6IzBmMDsgdGV4dC1hbGlnbjpjZW50ZXI7IHBhZGRpbmctdG9wOjUwcHg7Ij48aDE+QWNjZXNzIEdyYW50ZWQhPC9oMT48cD5ZZWggYWFwa2EgYXNsaSBzeXN0ZW0gaGFpLjwvcD48L2JvZHk+PC9odG1sPg==";
 
 app.get('*', (req, res) => {
-    // Secret Key check: Agar URL mein ?key=ahmad123 hoga tabhi page khulega
-    // Example: http://localhost:3000/?key=ahmad123
-    if (req.query.key === 'ahmad123') {
+    // URL check: localhost:3000/ahmad
+    if (req.url === '/ahmad') {
+        const decodedHtml = Buffer.from(encodedData, 'base64').toString('utf-8');
         res.setHeader('Content-Type', 'text/html');
-        return res.send(secretContent);
+        return res.send(decodedHtml);
     }
 
-    // Default Response: Sab ke liye sirf plain text
-    // Source code mein bhi sirf yahi 3 words nazar ayenge
+    // Default: Sirf "Page Not Found!"
+    // Source code (View Source) mein sirf yahi 3 words ayenge
     res.status(404).setHeader('Content-Type', 'text/plain').send('Page Not Found!');
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is LIVE on Port: ${PORT}`);
-    console.log(`Open: http://localhost:${PORT}/?key=ahmad123`);
+    console.log(`Server is Running!`);
+    console.log(`Open this link: http://localhost:3000/ahmad`);
 });
