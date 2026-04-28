@@ -15,7 +15,7 @@ export default async function handler(req, res) {
             const { uid, status, sumdep, sumwithdraw, country } = req.query;
 
             if (!uid) {
-                return res.status(400).send("Error: Missing Trader ID (uid)");
+                return res.status(400).send("Error: Missing Trader ID");
             }
 
             const userData = {
