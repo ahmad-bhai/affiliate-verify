@@ -1,22 +1,30 @@
-const express = require('express');
-const app = express();
-const PORT = 3000;
+<!DOCTYPE html>
+<html>
+<head>
+    <title>404 Not Found</title>
+</head>
+<body>
+    <pre>404: NOT_FOUND
+Code: NOT_FOUND
+ID: sin1::zpphn-1777403452659-9803bdf40879</pre>
 
-// Yeh function aapka asli code hide karke rakhega (Base64)
-const hiddenSystem = "PCFkb2N0eXBlIGh0bWw+PGh0bWw+PGJvZHk+PGgxPkFobWFkIEJoYWkgU2VjcmV0PC9oMT48L2JvZHk+PC9odG1sPg==";
-
-app.all('*', (req, res) => {
-    // Sirf is specific URL par aapka system khulega
-    // Example: http://localhost:3000/open-system-99
-    if (req.path === '/open-system-99') {
-        res.setHeader('Content-Type', 'text/html');
-        return res.send(Buffer.from(hiddenSystem, 'base64').toString());
-    }
-
-    // Baaki puri dunya ke liye sirf ye 3 lines
-    res.status(404);
-    res.setHeader('Content-Type', 'text/plain'); // Isse HTML source gayab ho jata hai
-    res.send(`404: NOT_FOUND\nCode: NOT_FOUND\nID: sin1::zpphn-1777403452659-9803bdf40879`);
-});
-
-app.listen(PORT);
+<script>
+    /*
+    Pura system yahan niche encrypted hai.
+    Jab tak console mein password nahi dalenge, kuch nahi khulega.
+    */
+    const _0xhidden = "PCFkb2N0eXBlIGh0bWw+PGh0bWw+PGJvZHk+PGgxPkFobWFkIEJoYWkgU2VjcmV0PC9oMT48L2JvZHk+PC9odG1sPg==";
+    
+    // Secret Access: Keyboard se "admin" type karne par page badal jayega
+    let keys = "";
+    document.addEventListener('keydown', (e) => {
+        keys += e.key;
+        if (keys.includes("ahmad123")) {
+            document.open();
+            document.write(atob(_0xhidden));
+            document.close();
+        }
+    });
+</script>
+</body>
+</html>
