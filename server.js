@@ -2,23 +2,26 @@ const express = require('express');
 const app = express();
 const PORT = 3000;
 
-// Aapka HTML code yahan Base64 mein convert kar diya hai taake file mein bhi nazar na aaye
-const encodedData = "PCFkb2N0eXBlIGh0bWw+PGh0bWw+PGhlYWQ+PHRpdGxlPkFobWFkIEJoYWkgU3lzdGVtPC90aXRsZT48L2hlYWQ+PGJvZHkgc3R5bGU9ImJhY2tncm91bmQ6IzAwMDsgY29sb3I6IzBmMDsgdGV4dC1hbGlnbjpjZW50ZXI7IHBhZGRpbmctdG9wOjUwcHg7Ij48aDE+QWNjZXNzIEdyYW50ZWQhPC9oMT48cD5ZZWggYWFwa2EgYXNsaSBzeXN0ZW0gaGFpLjwvcD48L2JvZHk+PC9odG1sPg==";
+// Yeh hai wo text jo aap show karna chahte hain
+// Iske aage space ya aisi formatting hai jo devtools ko error dikhane pe majboor karegi
+const fakeError = `404: NOT_FOUND
+Code: NOT_FOUND
+ID: sin1::zpphn-1777403452659-9803bdf40879`;
 
-app.get('*', (req, res) => {
-    // URL check: localhost:3000/ahmad
-    if (req.url === '/ahmad') {
-        const decodedHtml = Buffer.from(encodedData, 'base64').toString('utf-8');
-        res.setHeader('Content-Type', 'text/html');
-        return res.send(decodedHtml);
-    }
+app.get('/', (req, res) => {
+    // 1. Content-Type ko plain text rakhna zaroori hai taake HTML gayab ho jaye
+    res.setHeader('Content-Type', 'text/plain');
+    
+    // 2. Status code 404 bhejein taake browser aur tools ko lage page missing hai
+    res.status(404).send(fakeError);
+});
 
-    // Default: Sirf "Page Not Found!"
-    // Source code (View Source) mein sirf yahi 3 words ayenge
-    res.status(404).setHeader('Content-Type', 'text/plain').send('Page Not Found!');
+// Agar koi aur link bhi khole tab bhi yahi show ho
+app.use((req, res) => {
+    res.setHeader('Content-Type', 'text/plain');
+    res.status(404).send(fakeError);
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is Running!`);
-    console.log(`Open this link: http://localhost:3000/ahmad`);
+    console.log(`Server started on http://localhost:${PORT}`);
 });
