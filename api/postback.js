@@ -33,14 +33,13 @@ export default async function handler(req, res) {
                 withdrawal 
             } = req.query;
 
-            // Trader ID check (Dono keys check kar rahe hain taake miss na ho)
             const finalUid = uid || trader_id;
 
             if (!finalUid) {
                 return res.status(400).send("Error: Missing Trader ID (uid)");
             }
 
-            // Target user ka purana data Firebase se check karein (Deposits accumulate karne ke liye)
+            // Existing user check from Firebase
             let existingData = {};
             try {
                 const checkRes = await fetch(`${DB_URL}/${finalUid}.json`);
@@ -51,9 +50,9 @@ export default async function handler(req, res) {
                 console.error("Fetch existing user error:", err);
             }
 
-            // All Postback Parameters Parse karein
-            const currentDeposit = parseFloat(sumdep) || 0;
-            const currentWithdrawal = parseFloat(sumwithdraw) || 0;
+            // Parse numerical values accurately from Quotex postback
+            const currentDeposit = sumdep !== undefined ? parseFloat(sumdep) : parseFloat(existingData.total_deposit || 0);
+            const currentWithdrawal = sumwithdraw !== undefined ? parseFloat(sumwithdraw) : parseFloat(existingData.total_withdrawal || 0);
 
             const userData = {
                 uid: finalUid,
@@ -61,30 +60,28 @@ export default async function handler(req, res) {
                 country: country || existingData.country || "Unknown",
                 
                 // Track Status Flags
-                is_registered: reg === "true" || existingData.is_registered || false,
-                is_email_confirmed: conf === "true" || existingData.is_email_confirmed || false,
-                is_ftd: ftd === "true" || existingData.is_ftd || false,
-                has_deposited: dep === "true" || existingData.has_deposited || false,
-                has_withdrawn: withdrawal === "true" || existingData.has_withdrawn || false,
+                is_registered: reg === "true" || status === "reg" || existingData.is_registered || false,
+                is_email_confirmed: conf === "true" || status === "conf" || existingData.is_email_confirmed || false,
+                is_ftd: ftd === "true" || status === "ftd" || currentDeposit > 0 || existingData.is_ftd || false,
+                has_deposited: dep === "true" || status === "dep" || existingData.has_deposited || false,
+                has_withdrawn: withdrawal === "true" || status === "withdrawal" || existingData.has_withdrawn || false,
 
-                // Financial Tracking
-                last_deposit_amount: currentDeposit,
-                total_deposit: (parseFloat(existingData.total_deposit) || 0) + currentDeposit,
-                last_withdrawal_amount: currentWithdrawal,
-                total_withdrawal: (parseFloat(existingData.total_withdrawal) || 0) + currentWithdrawal,
+                // Financial Tracking (Direct accurate assignment)
+                total_deposit: isNaN(currentDeposit) ? 0 : currentDeposit,
+                total_withdrawal: isNaN(currentWithdrawal) ? 0 : currentWithdrawal,
 
                 // Tracking IDs
-                event_id: eid || event_id || existingData.event_id || null,
-                click_id: cid || click_id || existingData.click_id || null,
-                site_id: sid || site_id || existingData.site_id || null,
-                link_id: lid || existingData.link_id || null,
+                event_id: eid || event_id || existingData.event_id || "N/A",
+                click_id: cid || click_id || existingData.click_id || "N/A",
+                site_id: sid || site_id || existingData.site_id || "N/A",
+                link_id: lid || existingData.link_id || "N/A",
 
                 // Timestamps
                 created_at: existingData.created_at || new Date().toISOString(),
                 last_updated: new Date().toISOString()
             };
 
-            // Firebase Mein Update Karein
+            // Update Firebase
             const saveResponse = await fetch(`${DB_URL}/${finalUid}.json`, {
                 method: 'PUT',
                 body: JSON.stringify(userData),
@@ -98,7 +95,7 @@ export default async function handler(req, res) {
             }
         }
 
-        // 2. DATA VERIFY KARNA (Telegram Bot ya Dashboard - POST Method)
+        // 2. DATA VERIFY KARNA (Telegram Bot - POST Method)
         if (req.method === 'POST') {
             const { checkId } = req.body;
 
