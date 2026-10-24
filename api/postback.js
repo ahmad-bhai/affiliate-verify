@@ -50,9 +50,9 @@ export default async function handler(req, res) {
                 console.error("Fetch existing user error:", err);
             }
 
-            // Parse numerical values accurately from Quotex postback
-            const currentDeposit = sumdep !== undefined ? parseFloat(sumdep) : parseFloat(existingData.total_deposit || 0);
-            const currentWithdrawal = sumwithdraw !== undefined ? parseFloat(sumwithdraw) : parseFloat(existingData.total_withdrawal || 0);
+            // Parse deposit and withdrawal correctly
+            const parsedDeposit = sumdep !== undefined && sumdep !== "" ? parseFloat(sumdep) : parseFloat(existingData.total_deposit || 0);
+            const parsedWithdrawal = sumwithdraw !== undefined && sumwithdraw !== "" ? parseFloat(sumwithdraw) : parseFloat(existingData.total_withdrawal || 0);
 
             const userData = {
                 uid: finalUid,
@@ -62,13 +62,13 @@ export default async function handler(req, res) {
                 // Track Status Flags
                 is_registered: reg === "true" || status === "reg" || existingData.is_registered || false,
                 is_email_confirmed: conf === "true" || status === "conf" || existingData.is_email_confirmed || false,
-                is_ftd: ftd === "true" || status === "ftd" || currentDeposit > 0 || existingData.is_ftd || false,
+                is_ftd: ftd === "true" || status === "ftd" || parsedDeposit > 0 || existingData.is_ftd || false,
                 has_deposited: dep === "true" || status === "dep" || existingData.has_deposited || false,
                 has_withdrawn: withdrawal === "true" || status === "withdrawal" || existingData.has_withdrawn || false,
 
-                // Financial Tracking (Direct accurate assignment)
-                total_deposit: isNaN(currentDeposit) ? 0 : currentDeposit,
-                total_withdrawal: isNaN(currentWithdrawal) ? 0 : currentWithdrawal,
+                // Financial Tracking
+                total_deposit: isNaN(parsedDeposit) ? 0 : parsedDeposit,
+                total_withdrawal: isNaN(parsedWithdrawal) ? 0 : parsedWithdrawal,
 
                 // Tracking IDs
                 event_id: eid || event_id || existingData.event_id || "N/A",
@@ -81,7 +81,7 @@ export default async function handler(req, res) {
                 last_updated: new Date().toISOString()
             };
 
-            // Update Firebase
+            // Save / Update in Firebase
             const saveResponse = await fetch(`${DB_URL}/${finalUid}.json`, {
                 method: 'PUT',
                 body: JSON.stringify(userData),
@@ -89,9 +89,9 @@ export default async function handler(req, res) {
             });
 
             if (saveResponse.ok) {
-                return res.status(200).send("✅ Quotex Full Postback Processed Successfully");
+                return res.status(200).send("✅ Quotex Postback Processed");
             } else {
-                return res.status(500).send("❌ Firebase Storage Error");
+                return res.status(500).send("❌ Firebase Error");
             }
         }
 
